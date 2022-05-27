@@ -21,15 +21,14 @@ class WordleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Shortcuts(
-        shortcuts: {
-        LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
-        }, child:const MaterialApp(home: KeyboardDemo()));
+    return Shortcuts(shortcuts: {
+      LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
+    }, child: const MaterialApp(home: KeyboardDemo()));
   }
 }
 
-SelectedColor getSelectedState(
-    List<String> secret, String input, int position) {
+SelectedColor getSelectedState(List<String> secret, String input,
+    int position) {
   //not enough to compare only current one, if there is several same letters
   // hints are not obvious
   if (secret[position] == input) {
@@ -58,10 +57,12 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   int _currentAttempt = 1;
 
   final List<String> _userInputs =
-      List.filled(wordSize * maxAttempts, "", growable: false);
+  List.filled(wordSize * maxAttempts, "", growable: false);
   final List<SelectedColor> _inputsState = List.filled(
       wordSize * maxAttempts, SelectedColor.initial,
       growable: false);
+
+  bool _enableRestart = false;
   final Map<String, SelectedColor> _keyboardKeysState = {};
 
   //dictionary and the keyword part
@@ -70,7 +71,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
   Future<void> _readJson() async {
     final String response =
-        await rootBundle.loadString('assets/dictionary.json');
+    await rootBundle.loadString('assets/dictionary.json');
     final data = await json.decode(response);
     _dictionary = List<String>.from(data);
     _secret = _dictionary[math.Random().nextInt(_dictionary.length)];
@@ -90,7 +91,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                 children: [
                   const SizedBox(height: 50),
                   ElevatedButton.icon(
-                    icon: const Text('Guide'),
+                    icon: const Text('How to play'),
                     label: const Icon(Icons.help),
                     onPressed: () {
                       Navigator.push(
@@ -104,20 +105,28 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                   IgnorePointer(
                       ignoring: true,
                       child: GridView.builder(
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: wordSize),
-                      itemCount: _userInputs.length,
-                      itemBuilder: (BuildContext ctx, index) {
-                        return Container(
-                          margin: const EdgeInsets.all(2),
-                          alignment: Alignment.center,
-                          child: Text(_userInputs[index].toUpperCase()),
-                          decoration: BoxDecoration(
-                              color: getColor(_inputsState[index]),
-                              borderRadius: BorderRadius.circular(15)),
-                        );
-                      })),
+                          shrinkWrap: true,
+                          gridDelegate:
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: wordSize),
+                          itemCount: _userInputs.length,
+                          itemBuilder: (BuildContext ctx, index) {
+                            return Container(
+                              margin: const EdgeInsets.all(2),
+                              alignment: Alignment.center,
+                              child: Text(_userInputs[index].toUpperCase()),
+                              decoration: BoxDecoration(
+                                  color: getColor(_inputsState[index], false),
+                                  borderRadius: BorderRadius.circular(15)),
+                            );
+                          })),
+                  const Spacer(flex: 1),
+                  ElevatedButton.icon(
+                    icon: const Text('Try another word'),
+                    label: const Icon(Icons.restart_alt),
+                    onPressed: _restartGame,
+                  ),
+                  const Spacer(flex: 1),
                 ],
               )),
           const Spacer(flex: 1),
@@ -157,45 +166,60 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
     if (!_dictionary.contains(result)) {
       //validation failed
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("No such word in dictionary 😔. Each attempt must be a valid 5-letter word 📝."),
+        content: Text(
+            "No such word in dictionary 😔. Each attempt must be a valid 5-letter word 📝."),
       ));
-    } else if (result != _secret) {
-      //didn't get the word
-      if (_currentAttempt == maxAttempts) {
-        //last attempt failed
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Out of attempts. Game over!"),
-        ));
-      } else {
-        //game goes on, provide visual clues
-        setState(() {
-          result.split('').forEachIndexed((index, element) {
-            _inputsState[(_currentAttempt - 1) * wordSize + index] =
-                getSelectedState(_secret.split(''), element, index);
-          });
-          _currentAttempt++;
-          for (var i in result.split('')) {
-            if (!_secret.split('').contains(i)) {
-              log('highlighting $i item');
-              _keyboardKeysState[i] = SelectedColor.absent;
-            }
-          }
-        });
-      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("You won"),
-      ));
-      log('you won');
+      setState(() {
+        result.split('').forEachIndexed((index, element) {
+          _inputsState[(_currentAttempt - 1) * wordSize + index] =
+              getSelectedState(_secret.split(''), element, index);
+        });
+      });
+      if (result != _secret) {
+        //didn't get the word
+        if (_currentAttempt == maxAttempts) {
+          //last attempt failed
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text("Out of attempts. Game over!"),
+          ));
+        } else {
+          //game goes on, provide visual clues
+          setState(() {
+            _currentAttempt++;
+            for (var i in result.split('')) {
+              if (!_secret.split('').contains(i)) {
+                log('highlighting $i item');
+                _keyboardKeysState[i] = SelectedColor.absent;
+              }
+            }
+          });
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Congrats! You won 🎉"),
+        ));
+        log('you won');
+      }
     }
   }
 
-  void _backspace() {
-    var index = _userInputs.lastIndexWhere((o) => o.isNotEmpty);
-    if (index >= (_currentAttempt - 1) * wordSize) {
-      setState(() {
-        _userInputs[index] = "";
-      });
-    }
+void _backspace() {
+  var index = _userInputs.lastIndexWhere((o) => o.isNotEmpty);
+  if (index >= (_currentAttempt - 1) * wordSize) {
+    setState(() {
+      _userInputs[index] = "";
+    });
   }
 }
+
+void _restartGame() {
+  setState(() {
+    _userInputs.forEachIndexed((index, item) => _userInputs[index] = "");
+    _inputsState.forEachIndexed((index, item) =>
+    _inputsState[index] = SelectedColor.initial);
+    _keyboardKeysState.clear();
+    _currentAttempt = 1;
+    _readJson();
+  });
+}}

@@ -7,10 +7,12 @@ enum SelectedColor {
   presentWrongPlace,
 }
 
-Color getColor(SelectedColor? state) {
+Color getColor(SelectedColor? state, bool isInKeyboard) {
   switch (state) {
     case SelectedColor.initial:
-      return Colors.grey;
+      // ignore: curly_braces_in_flow_control_structures
+      if(!isInKeyboard) return Colors.grey.shade600;
+      else return Colors.grey.shade400;
     case SelectedColor.absent:
       return Colors.white30;
     case SelectedColor.present:
@@ -18,7 +20,8 @@ Color getColor(SelectedColor? state) {
     case SelectedColor.presentWrongPlace:
       return Colors.amber;
     default:
-      return Colors.grey;
+      if(!isInKeyboard) return Colors.grey.shade600;
+      else return Colors.grey.shade400;
   }
 }
 
@@ -68,7 +71,7 @@ class CustomKeyboard extends StatelessWidget {
         children: [
           for (var i in _firstRow.split(''))
             TextKey(
-              color: getColor(buttonColors[i]),
+              color: getColor(buttonColors[i], true),
               text: i,
               onTextInput: _textInputHandler,
             )
@@ -84,7 +87,7 @@ class CustomKeyboard extends StatelessWidget {
           const SizedBox(width: 15),
           for (var i in _secondRow.split(''))
             TextKey(
-              color: getColor(buttonColors[i]),
+              color: getColor(buttonColors[i], true),
               text: i,
               onTextInput: _textInputHandler,
             ),
@@ -99,14 +102,14 @@ class CustomKeyboard extends StatelessWidget {
       child: Row(
         children: [
           TextKey(
-            color: Colors.grey,
+            color: Colors.grey.shade600,
             text: 'Enter',
             flex: 2,
             onTextInput: _enterHandler,
           ),
           for (var i in _thirdRow.split(''))
             TextKey(
-              color: getColor(buttonColors[i]),
+              color: getColor(buttonColors[i], true),
               text: i,
               onTextInput: _textInputHandler,
             ),
@@ -186,7 +189,7 @@ class BackspaceKey extends StatelessWidget {
             ),
           ),
           decoration: BoxDecoration(
-              color: Colors.grey, borderRadius: BorderRadius.circular(8)),
+              color: Colors.grey.shade600, borderRadius: BorderRadius.circular(8)),
         ),
       ),
     );
