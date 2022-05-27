@@ -2,7 +2,10 @@
 Shameless copy of Wordle game https://www.powerlanguage.co.uk/wordle/ 
 Source code allows to build for Android and iOS in a Flutter module.
 
+
 Made for entertainment and education purposes only.
+
+Intended for Android TV with D-pad support and leanback layout.
 
 ![photo_2022-02-05_00-23-49](https://user-images.githubusercontent.com/5046850/152611262-c728db2f-d2d9-41d2-bf78-b5997cbc3307.jpg)
 
