@@ -16,7 +16,7 @@ class GuideRoute extends StatelessWidget {
         const Padding(
             padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
             child: Text(
-              '''Guess the WORDLE in 6 tries.
+              '''WORDLY is about guessing the hidden word in 6 tries.
 
 Each guess must be a valid 5 letter word. Hit the enter button to submit.
 
@@ -24,7 +24,7 @@ After each guess, the color of the tiles will change to show how close your gues
               style: TextStyle(color: Colors.white54),
             )),
         Padding(
-            padding: const EdgeInsets.fromLTRB(8, 20, 20, 4),
+            padding: const EdgeInsets.fromLTRB(200, 20, 200, 4),
             child: Row(children: [
               const SizedBox(width: 15),
               for (var i in "weary".split(''))
@@ -38,7 +38,7 @@ After each guess, the color of the tiles will change to show how close your gues
         const Text('The letter W is in the word and in the correct spot.',
             style: TextStyle(color: Colors.white54)),
         Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+            padding: const EdgeInsets.fromLTRB(200, 20, 200, 4),
             child: Row(children: [
               const SizedBox(width: 15),
               for (var i in "pills".split(''))
@@ -52,7 +52,7 @@ After each guess, the color of the tiles will change to show how close your gues
         const Text('The letter I is in the word but in the wrong spot.',
             style: TextStyle(color: Colors.white54)),
         Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
+            padding: const EdgeInsets.fromLTRB(200, 20, 200, 4),
             child: Row(children: [
               const SizedBox(width: 15),
               for (var i in "vague".split(''))

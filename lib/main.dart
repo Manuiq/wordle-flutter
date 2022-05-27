@@ -21,7 +21,10 @@ class WordleApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: KeyboardDemo());
+    return Shortcuts(
+        shortcuts: {
+        LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
+        }, child:const MaterialApp(home: KeyboardDemo()));
   }
 }
 
@@ -78,42 +81,57 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
     return Scaffold(
       backgroundColor: Colors.black87,
       resizeToAvoidBottomInset: false,
-      body: Column(
+      body: Row(
         children: [
-          const SizedBox(height: 50),
-          ElevatedButton.icon(
-            icon: const Text('Guide'),
-            label: const Icon(Icons.help),
-            onPressed: () {Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const GuideRoute()),
-            );
-              },
-          ),
-          GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: wordSize),
-              itemCount: _userInputs.length,
-              itemBuilder: (BuildContext ctx, index) {
-                return Container(
-                  margin: const EdgeInsets.all(2),
-                  alignment: Alignment.center,
-                  child: Text(_userInputs[index].toUpperCase()),
-                  decoration: BoxDecoration(
-                      color: getColor(_inputsState[index]),
-                      borderRadius: BorderRadius.circular(15)),
-                );
-              }),
-          const Spacer(),
-          CustomKeyboard(
-            buttonColors: _keyboardKeysState,
-            onTextInput: (myText) {
-              _insertLetter(myText);
-            },
-            onEnter: _enter,
-            onBackspace: _backspace,
-          ),
+          const Spacer(flex: 1),
+          Expanded(
+              flex: 5,
+              child: Column(
+                children: [
+                  const SizedBox(height: 50),
+                  ElevatedButton.icon(
+                    icon: const Text('Guide'),
+                    label: const Icon(Icons.help),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const GuideRoute()),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 25),
+                  IgnorePointer(
+                      ignoring: true,
+                      child: GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: wordSize),
+                      itemCount: _userInputs.length,
+                      itemBuilder: (BuildContext ctx, index) {
+                        return Container(
+                          margin: const EdgeInsets.all(2),
+                          alignment: Alignment.center,
+                          child: Text(_userInputs[index].toUpperCase()),
+                          decoration: BoxDecoration(
+                              color: getColor(_inputsState[index]),
+                              borderRadius: BorderRadius.circular(15)),
+                        );
+                      })),
+                ],
+              )),
+          const Spacer(flex: 1),
+          Expanded(
+              flex: 10,
+              child: CustomKeyboard(
+                buttonColors: _keyboardKeysState,
+                onTextInput: (myText) {
+                  _insertLetter(myText);
+                },
+                onEnter: _enter,
+                onBackspace: _backspace,
+              )),
+          const Spacer(flex: 1),
         ],
       ),
     );
@@ -133,12 +151,13 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   void _enter() {
     var result = _userInputs
         .sublist((_currentAttempt - 1) * wordSize, _currentAttempt * wordSize)
-        .join().toLowerCase();
+        .join()
+        .toLowerCase();
     //validate input
     if (!_dictionary.contains(result)) {
       //validation failed
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("No such word in dictionary"),
+        content: Text("No such word in dictionary 😔. Each attempt must be a valid 5-letter word 📝."),
       ));
     } else if (result != _secret) {
       //didn't get the word
