@@ -16,7 +16,7 @@ class GuideRoute extends StatelessWidget {
         const Padding(
             padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
             child: Text(
-              '''WORDLY is about guessing the hidden word in 6 tries.
+              '''WORDLY is about guessing the hidden word in 5 tries.
 
 Each guess must be a valid 5 letter word. Hit the enter button to submit.
 
@@ -29,7 +29,7 @@ After each guess, the color of the tiles will change to show how close your gues
               const SizedBox(width: 15),
               for (var i in "weary".split(''))
                 TextKey(
-                  color: getColor((i == "w") ? SelectedColor.present : SelectedColor.initial),
+                  color: getColor((i == "w") ? SelectedColor.present : SelectedColor.initial, false),
                   text: i,
                   onTextInput: (myText) {},
                 ),
@@ -43,7 +43,7 @@ After each guess, the color of the tiles will change to show how close your gues
               const SizedBox(width: 15),
               for (var i in "pills".split(''))
                 TextKey(
-                  color: getColor((i == "i") ? SelectedColor.presentWrongPlace : SelectedColor.initial),
+                  color: getColor((i == "i") ? SelectedColor.presentWrongPlace : SelectedColor.initial, false),
                   text: i,
                   onTextInput: (myText) {},
                 ),
@@ -57,7 +57,7 @@ After each guess, the color of the tiles will change to show how close your gues
               const SizedBox(width: 15),
               for (var i in "vague".split(''))
                 TextKey(
-                  color: getColor((i == "u") ? SelectedColor.absent : SelectedColor.initial),
+                  color: getColor((i == "u") ? SelectedColor.absent : SelectedColor.initial, false),
                   text: i,
                   onTextInput: (myText) {},
                 ),
