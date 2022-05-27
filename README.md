@@ -7,6 +7,10 @@ Made for entertainment and education purposes only.
 
 Intended for Android TV with D-pad support and leanback layout.
 
+![Screenshot_20220527_213717](https://user-images.githubusercontent.com/5046850/170770995-f6202849-db87-4d44-8be6-993474795df4.png)
+
 ![photo_2022-02-05_00-23-49](https://user-images.githubusercontent.com/5046850/152611262-c728db2f-d2d9-41d2-bf78-b5997cbc3307.jpg)
 
 ![photo_2022-02-05_00-23-47](https://user-images.githubusercontent.com/5046850/152611265-96a98789-abde-453b-9382-7ecf4e003aa4.jpg)
+
+
