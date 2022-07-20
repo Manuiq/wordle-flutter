@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 
 import 'guide.dart';
 import 'widgets.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 void main() => runApp(const WordleApp());
 
@@ -48,21 +49,30 @@ class KeyboardDemo extends StatefulWidget {
 }
 
 class _KeyboardDemoState extends State<KeyboardDemo> {
+  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  bool _isTv = false;
+
+  Future<void> initPlatformState() async {
+    var isTv = (await deviceInfoPlugin.androidInfo)
+        .systemFeatures.contains('android.software.leanback_only');
+    setState(() {_isTv = isTv;});
+  }
+
   @override
   void initState() {
     super.initState();
+    initPlatformState();
     _readJson();
   }
 
   int _currentAttempt = 1;
 
   final List<String> _userInputs =
-  List.filled(wordSize * maxAttempts, "", growable: false);
+      List.filled(wordSize * maxAttempts, "", growable: false);
   final List<SelectedColor> _inputsState = List.filled(
       wordSize * maxAttempts, SelectedColor.initial,
       growable: false);
 
-  bool _enableRestart = false;
   final Map<String, SelectedColor> _keyboardKeysState = {};
 
   //dictionary and the keyword part
@@ -71,7 +81,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
   Future<void> _readJson() async {
     final String response =
-    await rootBundle.loadString('assets/dictionary.json');
+        await rootBundle.loadString('assets/dictionary.json');
     final data = await json.decode(response);
     _dictionary = List<String>.from(data);
     _secret = _dictionary[math.Random().nextInt(_dictionary.length)];
@@ -79,6 +89,10 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
   @override
   Widget build(BuildContext context) {
+    log("isTv = " + _isTv.toString());
+    if(!_isTv){
+      return Text("not a TV");
+    }
     return Scaffold(
       backgroundColor: Colors.black87,
       resizeToAvoidBottomInset: false,
@@ -107,8 +121,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                       child: GridView.builder(
                           shrinkWrap: true,
                           gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: wordSize),
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: wordSize),
                           itemCount: _userInputs.length,
                           itemBuilder: (BuildContext ctx, index) {
                             return Container(
@@ -204,22 +218,23 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
     }
   }
 
-void _backspace() {
-  var index = _userInputs.lastIndexWhere((o) => o.isNotEmpty);
-  if (index >= (_currentAttempt - 1) * wordSize) {
+  void _backspace() {
+    var index = _userInputs.lastIndexWhere((o) => o.isNotEmpty);
+    if (index >= (_currentAttempt - 1) * wordSize) {
+      setState(() {
+        _userInputs[index] = "";
+      });
+    }
+  }
+
+  void _restartGame() {
     setState(() {
-      _userInputs[index] = "";
+      _userInputs.forEachIndexed((index, item) => _userInputs[index] = "");
+      _inputsState.forEachIndexed(
+          (index, item) => _inputsState[index] = SelectedColor.initial);
+      _keyboardKeysState.clear();
+      _currentAttempt = 1;
+      _readJson();
     });
   }
 }
-
-void _restartGame() {
-  setState(() {
-    _userInputs.forEachIndexed((index, item) => _userInputs[index] = "");
-    _inputsState.forEachIndexed((index, item) =>
-    _inputsState[index] = SelectedColor.initial);
-    _keyboardKeysState.clear();
-    _currentAttempt = 1;
-    _readJson();
-  });
-}}
