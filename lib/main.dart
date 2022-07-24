@@ -91,9 +91,51 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   Widget build(BuildContext context) {
     log("isTv = " + _isTv.toString());
     if(!_isTv){
-      return Text("not a TV");
+      return Scaffold(
+        backgroundColor: Colors.black87,
+        resizeToAvoidBottomInset: false,
+        body: Column(
+        children: [
+          const SizedBox(height: 50),
+          ElevatedButton.icon(
+            icon: const Text('Guide'),
+            label: const Icon(Icons.help),
+            onPressed: () {
+              Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const GuideRoute()),
+            );
+            },
+          ),
+          GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: wordSize),
+              itemCount: _userInputs.length,
+              itemBuilder: (BuildContext ctx, index) {
+                return Container(
+                  margin: const EdgeInsets.all(2),
+                  alignment: Alignment.center,
+                  child: Text(_userInputs[index].toUpperCase()),
+                  decoration: BoxDecoration(
+                      color: getColor(_inputsState[index], false),
+                      borderRadius: BorderRadius.circular(15)),
+                );
+              }),
+          const Spacer(),
+          CustomKeyboard(
+            buttonColors: _keyboardKeysState,
+            onTextInput: (myText) {
+              _insertLetter(myText);
+            },
+            onEnter: _enter,
+            onBackspace: _backspace,
+          ),
+        ],
+      ));
     }
-    return Scaffold(
+    else {
+      return Scaffold(
       backgroundColor: Colors.black87,
       resizeToAvoidBottomInset: false,
       body: Row(
@@ -158,6 +200,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
         ],
       ),
     );
+    }
   }
 
   void _insertLetter(String letter) {
