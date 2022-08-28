@@ -51,8 +51,8 @@ android {
         applicationId "ua.polohalo.word_composer"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 3
-        versionName "1.3"
+        versionCode 4
+        versionName "1.4"
     }
 
     signingConfigs {
