@@ -5,12 +5,16 @@ import "dart:math" as math;
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 
 import 'guide.dart';
 import 'widgets.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
-void main() => runApp(const WordleApp());
+void main() {
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(const WordleApp());
+}
 
 //Game conditions
 
@@ -103,7 +107,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
             onPressed: () {
               Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const GuideRoute()),
+              MaterialPageRoute(builder: (context) => GuideRoute(isTv: _isTv,)),
             );
             },
           ),
@@ -113,9 +117,11 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                   crossAxisCount: wordSize),
               itemCount: _userInputs.length,
               itemBuilder: (BuildContext ctx, index) {
-                return Container(
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
                   margin: const EdgeInsets.all(2),
                   alignment: Alignment.center,
+                  transform: Matrix4.skewY(_inputsState[index] == SelectedColor.initial ? 0 : math.pi),
                   child: Text(_userInputs[index].toUpperCase()),
                   decoration: BoxDecoration(
                       color: getColor(_inputsState[index], false),
@@ -153,12 +159,27 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const GuideRoute()),
+                            builder: (context) => GuideRoute(isTv: _isTv,)),
                       );
                     },
                   ),
                   const SizedBox(height: 25),
-                  IgnorePointer(
+              GestureDetector(
+                  onTap: () { },
+                  child:AnimatedContainer(
+                        color: getColor(SelectedColor.initial, false),
+                        duration: const Duration(seconds: 2),
+                        curve: Curves.fastOutSlowIn,
+                        child: Container(
+                    margin: const EdgeInsets.all(2),
+                    alignment: Alignment.center,
+                    child: Text("wtf"),
+                    decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15)),
+                    )
+                    )
+                  ),
+              IgnorePointer(
                       ignoring: true,
                       child: GridView.builder(
                           shrinkWrap: true,
@@ -204,6 +225,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   }
 
   void _insertLetter(String letter) {
+    HapticFeedback.mediumImpact();
+    SystemSound.play(SystemSoundType.click);
     int replace = _userInputs.indexWhere((o) => o.isEmpty);
     setState(() {
       if (replace < _currentAttempt * wordSize) {
@@ -215,6 +238,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   }
 
   void _enter() {
+    HapticFeedback.mediumImpact();
+    SystemSound.play(SystemSoundType.click);
     var result = _userInputs
         .sublist((_currentAttempt - 1) * wordSize, _currentAttempt * wordSize)
         .join()
@@ -262,6 +287,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   }
 
   void _backspace() {
+    HapticFeedback.mediumImpact();
+    SystemSound.play(SystemSoundType.click);
     var index = _userInputs.lastIndexWhere((o) => o.isNotEmpty);
     if (index >= (_currentAttempt - 1) * wordSize) {
       setState(() {

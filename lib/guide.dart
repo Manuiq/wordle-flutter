@@ -1,12 +1,16 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 import 'widgets.dart';
 
 class GuideRoute extends StatelessWidget {
-  const GuideRoute({Key? key}) : super(key: key);
+  final bool isTv;
+  const GuideRoute({Key? key, required this.isTv}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    double paddingHorizontal = isTv ? 200 : 20;
     return Scaffold(
       appBar: AppBar(
         title: const Text('How to Play'),
@@ -24,7 +28,7 @@ After each guess, the color of the tiles will change to show how close your gues
               style: TextStyle(color: Colors.white54),
             )),
         Padding(
-            padding: const EdgeInsets.fromLTRB(200, 20, 200, 4),
+            padding: EdgeInsets.fromLTRB(paddingHorizontal, 20, paddingHorizontal, 4),
             child: Row(children: [
               const SizedBox(width: 15),
               for (var i in "weary".split(''))
@@ -38,7 +42,7 @@ After each guess, the color of the tiles will change to show how close your gues
         const Text('The letter W is in the word and in the correct spot.',
             style: TextStyle(color: Colors.white54)),
         Padding(
-            padding: const EdgeInsets.fromLTRB(200, 20, 200, 4),
+            padding: EdgeInsets.fromLTRB(paddingHorizontal, 20, paddingHorizontal, 4),
             child: Row(children: [
               const SizedBox(width: 15),
               for (var i in "pills".split(''))
@@ -52,7 +56,7 @@ After each guess, the color of the tiles will change to show how close your gues
         const Text('The letter I is in the word but in the wrong spot.',
             style: TextStyle(color: Colors.white54)),
         Padding(
-            padding: const EdgeInsets.fromLTRB(200, 20, 200, 4),
+            padding: EdgeInsets.fromLTRB(paddingHorizontal, 20, paddingHorizontal, 4),
             child: Row(children: [
               const SizedBox(width: 15),
               for (var i in "vague".split(''))

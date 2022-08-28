@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:flutter/material.dart';
 
 enum SelectedColor {
@@ -7,21 +9,21 @@ enum SelectedColor {
   presentWrongPlace,
 }
 
+// ignore: curly_braces_in_flow_control_structures
 Color getColor(SelectedColor? state, bool isInKeyboard) {
   switch (state) {
     case SelectedColor.initial:
-      // ignore: curly_braces_in_flow_control_structures
-      if(!isInKeyboard) return Colors.grey.shade600;
+      if(!isInKeyboard) return Colors.white;
       else return Colors.grey.shade400;
     case SelectedColor.absent:
-      return Colors.white30;
+      return Colors.white54;
     case SelectedColor.present:
       return Colors.green;
     case SelectedColor.presentWrongPlace:
       return Colors.amber;
     default:
       if(!isInKeyboard) return Colors.grey.shade600;
-      else return Colors.grey.shade400;
+      else return Colors.white;
   }
 }
 
@@ -102,7 +104,7 @@ class CustomKeyboard extends StatelessWidget {
       child: Row(
         children: [
           TextKey(
-            color: Colors.grey.shade600,
+            color: Colors.grey.shade400,
             text: 'Enter',
             flex: 2,
             onTextInput: _enterHandler,
@@ -189,7 +191,7 @@ class BackspaceKey extends StatelessWidget {
             ),
           ),
           decoration: BoxDecoration(
-              color: Colors.grey.shade600, borderRadius: BorderRadius.circular(8)),
+              color: Colors.grey.shade400, borderRadius: BorderRadius.circular(8)),
         ),
       ),
     );
