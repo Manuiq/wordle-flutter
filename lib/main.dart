@@ -12,7 +12,6 @@ import 'widgets.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 
 void main() {
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const WordleApp());
 }
 
@@ -59,7 +58,11 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   Future<void> initPlatformState() async {
     var isTv = (await deviceInfoPlugin.androidInfo)
         .systemFeatures.contains('android.software.leanback_only');
-    setState(() {_isTv = isTv;});
+    setState(() {_isTv = isTv;
+    if (!isTv) {
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    }
+    });
   }
 
   @override
@@ -129,6 +132,12 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                 );
               }),
           const Spacer(),
+          ElevatedButton.icon(
+            icon: const Text('Try another word'),
+            label: const Icon(Icons.restart_alt),
+            onPressed: _restartGame,
+          ),
+          const Spacer(),
           CustomKeyboard(
             buttonColors: _keyboardKeysState,
             onTextInput: (myText) {
@@ -164,21 +173,6 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                     },
                   ),
                   const SizedBox(height: 25),
-              GestureDetector(
-                  onTap: () { },
-                  child:AnimatedContainer(
-                        color: getColor(SelectedColor.initial, false),
-                        duration: const Duration(seconds: 2),
-                        curve: Curves.fastOutSlowIn,
-                        child: Container(
-                    margin: const EdgeInsets.all(2),
-                    alignment: Alignment.center,
-                    child: Text("wtf"),
-                    decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15)),
-                    )
-                    )
-                  ),
               IgnorePointer(
                       ignoring: true,
                       child: GridView.builder(
