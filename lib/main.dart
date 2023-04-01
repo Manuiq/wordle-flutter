@@ -31,8 +31,8 @@ class WordleApp extends StatelessWidget {
   }
 }
 
-SelectedColor getSelectedState(List<String> secret, String input,
-    int position) {
+SelectedColor getSelectedState(
+    List<String> secret, String input, int position) {
   //not enough to compare only current one, if there is several same letters
   // hints are not obvious
   if (secret[position] == input) {
@@ -78,7 +78,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   int _currentAttempt = 1;
 
   final List<String> _userInputs =
-  List.filled(wordSize * maxAttempts, "", growable: false);
+      List.filled(wordSize * maxAttempts, "", growable: false);
   final List<SelectedColor> _inputsState = List.filled(
       wordSize * maxAttempts, SelectedColor.initial,
       growable: false);
@@ -91,7 +91,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
   Future<void> _readJson() async {
     final String response =
-    await rootBundle.loadString('assets/dictionary.json');
+        await rootBundle.loadString('assets/dictionary.json');
     final data = await json.decode(response);
     _dictionary = List<String>.from(data);
     _secret = _dictionary[math.Random().nextInt(_dictionary.length)];
@@ -113,35 +113,38 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => GuideRoute(isTv: _isTv,)),
+                    MaterialPageRoute(
+                        builder: (context) => GuideRoute(
+                              isTv: _isTv,
+                            )),
                   );
                 },
               ),
               const Spacer(),
               Flexible(
-            flex:60,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 300),
-              child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: wordSize),
-                  itemCount: _userInputs.length,
-                  itemBuilder: (BuildContext ctx, index) {
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 500),
-                      margin: const EdgeInsets.all(2),
-                      alignment: Alignment.center,
-                      transform: Matrix4.skewY(
-                          _inputsState[index] == SelectedColor.initial
-                              ? 0
-                              : math.pi),
-                      child: Text(_userInputs[index].toUpperCase()),
-                      decoration: BoxDecoration(
-                          color: getColor(_inputsState[index], false),
-                          borderRadius: BorderRadius.circular(15)),
-                    );
-                  }),
-            )),
+                  flex: 60,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 300),
+                    child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: wordSize),
+                        itemCount: _userInputs.length,
+                        itemBuilder: (BuildContext ctx, index) {
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
+                            margin: const EdgeInsets.all(2),
+                            alignment: Alignment.center,
+                            transform: Matrix4.skewY(
+                                _inputsState[index] == SelectedColor.initial
+                                    ? 0
+                                    : math.pi),
+                            child: Text(_userInputs[index].toUpperCase()),
+                            decoration: BoxDecoration(
+                                color: getColor(_inputsState[index], false),
+                                borderRadius: BorderRadius.circular(15)),
+                          );
+                        }),
+                  )),
               const Spacer(),
               ElevatedButton.icon(
                 icon: const Text('Try another word'),
@@ -150,16 +153,18 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
               ),
               const Spacer(),
               Flexible(
-              flex: 30,
-              child: CustomKeyboard(
-                buttonColors: _keyboardKeysState,
-                onTextInput: (myText) {
-                  _insertLetter(myText);
-                },
-                onEnter: _enter,
-                onBackspace: _backspace,
-              ),
-            ),
+                  flex: 30,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: CustomKeyboard(
+                      buttonColors: _keyboardKeysState,
+                      onTextInput: (myText) {
+                        _insertLetter(myText);
+                      },
+                      onEnter: _enter,
+                      onBackspace: _backspace,
+                    ),
+                  )),
             ],
           ));
     } else {
@@ -181,8 +186,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  GuideRoute(
+                              builder: (context) => GuideRoute(
                                     isTv: _isTv,
                                   )),
                         );
@@ -194,8 +198,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                         child: GridView.builder(
                             shrinkWrap: true,
                             gridDelegate:
-                            SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: wordSize),
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: wordSize),
                             itemCount: _userInputs.length,
                             itemBuilder: (BuildContext ctx, index) {
                               return Container(
@@ -309,7 +313,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
     setState(() {
       _userInputs.forEachIndexed((index, item) => _userInputs[index] = "");
       _inputsState.forEachIndexed(
-              (index, item) => _inputsState[index] = SelectedColor.initial);
+          (index, item) => _inputsState[index] = SelectedColor.initial);
       _keyboardKeysState.clear();
       _currentAttempt = 1;
       _readJson();
