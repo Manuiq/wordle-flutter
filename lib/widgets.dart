@@ -109,7 +109,7 @@ class CustomKeyboard extends StatelessWidget {
       child: Row(
         children: [
           TextKey(
-            color: Colors.grey.shade400,
+            color: const Color(0xffff914d),
             text: 'Enter',
             flex: 2,
             onTextInput: _enterHandler,
