@@ -192,7 +192,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                         );
                       },
                     ),
-                    const SizedBox(height: 25),
+                    const IgnorePointer(
+                        ignoring: true, child: SizedBox(height: 25)),
                     IgnorePointer(
                         ignoring: true,
                         child: GridView.builder(
@@ -211,13 +212,15 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                                     borderRadius: BorderRadius.circular(15)),
                               );
                             })),
-                    const Spacer(flex: 1),
+                    const IgnorePointer(
+                        ignoring: true, child: Spacer(flex: 1)),
                     ElevatedButton.icon(
                       icon: const Text('Try another word'),
                       label: const Icon(Icons.restart_alt),
                       onPressed: _restartGame,
                     ),
-                    const Spacer(flex: 1),
+                    const IgnorePointer(
+                        ignoring: true, child: Spacer(flex: 1)),
                   ],
                 )),
             const Spacer(flex: 1),

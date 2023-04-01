@@ -156,6 +156,7 @@ class TextKey extends StatelessWidget {
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             color: color,
             child: InkWell(
+              focusColor: Colors.black45,
               child: Align(
                 alignment: Alignment.center,
                 child: Text(text.toUpperCase(), textAlign: TextAlign.center),
@@ -187,17 +188,21 @@ class BackspaceKey extends StatelessWidget {
       flex: flex,
       child: Padding(
         padding: const EdgeInsets.all(2),
-        child: Container(
+        child: SizedBox(
           height: 48,
-          child: Center(
+          child: Material(
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            color: Colors.white54,
             child: InkWell(
+              focusColor: Colors.black45,
+              child: const Align(
+                alignment: Alignment.center,
+                child: Icon(Icons.backspace),
+              ),
               onTap: onBackspace,
-              child: const Icon(Icons.backspace),
             ),
           ),
-          decoration: BoxDecoration(
-              color: Colors.grey.shade400,
-              borderRadius: BorderRadius.circular(8)),
         ),
       ),
     );
