@@ -6,6 +6,7 @@ import 'widgets.dart';
 
 class GuideRoute extends StatelessWidget {
   final bool isTv;
+
   const GuideRoute({Key? key, required this.isTv}) : super(key: key);
 
   @override
@@ -28,45 +29,66 @@ After each guess, the color of the tiles will change to show how close your gues
               style: TextStyle(color: Colors.white54),
             )),
         Padding(
-            padding: EdgeInsets.fromLTRB(paddingHorizontal, 20, paddingHorizontal, 4),
-            child: Row(children: [
-              const SizedBox(width: 15),
-              for (var i in "weary".split(''))
-                TextKey(
-                  color: getColor((i == "w") ? SelectedColor.present : SelectedColor.initial, false),
-                  text: i,
-                  onTextInput: (myText) {},
-                ),
-              const SizedBox(width: 15),
-            ])),
+            padding: EdgeInsets.fromLTRB(
+                paddingHorizontal, 20, paddingHorizontal, 4),
+            child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Row(children: [
+                  const SizedBox(width: 15),
+                  for (var i in "weary".split(''))
+                    TextKey(
+                      color: getColor(
+                          (i == "w")
+                              ? SelectedColor.present
+                              : SelectedColor.initial,
+                          false),
+                      text: i,
+                      onTextInput: (myText) {},
+                    ),
+                  const SizedBox(width: 15),
+                ]))),
         const Text('The letter W is in the word and in the correct spot.',
             style: TextStyle(color: Colors.white54)),
         Padding(
-            padding: EdgeInsets.fromLTRB(paddingHorizontal, 20, paddingHorizontal, 4),
-            child: Row(children: [
-              const SizedBox(width: 15),
-              for (var i in "pills".split(''))
-                TextKey(
-                  color: getColor((i == "i") ? SelectedColor.presentWrongPlace : SelectedColor.initial, false),
-                  text: i,
-                  onTextInput: (myText) {},
-                ),
-              const SizedBox(width: 15),
-            ])),
+            padding: EdgeInsets.fromLTRB(
+                paddingHorizontal, 20, paddingHorizontal, 4),
+            child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Row(children: [
+                  const SizedBox(width: 15),
+                  for (var i in "pills".split(''))
+                    TextKey(
+                      color: getColor(
+                          (i == "i")
+                              ? SelectedColor.presentWrongPlace
+                              : SelectedColor.initial,
+                          false),
+                      text: i,
+                      onTextInput: (myText) {},
+                    ),
+                  const SizedBox(width: 15),
+                ]))),
         const Text('The letter I is in the word but in the wrong spot.',
             style: TextStyle(color: Colors.white54)),
         Padding(
-            padding: EdgeInsets.fromLTRB(paddingHorizontal, 20, paddingHorizontal, 4),
-            child: Row(children: [
-              const SizedBox(width: 15),
-              for (var i in "vague".split(''))
-                TextKey(
-                  color: getColor((i == "u") ? SelectedColor.absent : SelectedColor.initial, false),
-                  text: i,
-                  onTextInput: (myText) {},
-                ),
-              const SizedBox(width: 15),
-            ])),
+            padding: EdgeInsets.fromLTRB(
+                paddingHorizontal, 20, paddingHorizontal, 4),
+            child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Row(children: [
+                  const SizedBox(width: 15),
+                  for (var i in "vague".split(''))
+                    TextKey(
+                      color: getColor(
+                          (i == "u")
+                              ? SelectedColor.absent
+                              : SelectedColor.initial,
+                          false),
+                      text: i,
+                      onTextInput: (myText) {},
+                    ),
+                  const SizedBox(width: 15),
+                ]))),
         const Text('The letter U is not in the word in any spot.',
             style: TextStyle(color: Colors.white54)),
       ]),

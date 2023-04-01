@@ -57,11 +57,14 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
   Future<void> initPlatformState() async {
     var isTv = (await deviceInfoPlugin.androidInfo)
-        .systemFeatures.contains('android.software.leanback_only');
-    setState(() {_isTv = isTv;
-    if (!isTv) {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    }
+        .systemFeatures
+        .contains('android.software.leanback_only');
+    setState(() {
+      _isTv = isTv;
+      if (!isTv) {
+        SystemChrome.setPreferredOrientations(
+            [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+      }
     });
   }
 
@@ -75,7 +78,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   int _currentAttempt = 1;
 
   final List<String> _userInputs =
-      List.filled(wordSize * maxAttempts, "", growable: false);
+  List.filled(wordSize * maxAttempts, "", growable: false);
   final List<SelectedColor> _inputsState = List.filled(
       wordSize * maxAttempts, SelectedColor.initial,
       growable: false);
@@ -88,7 +91,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
   Future<void> _readJson() async {
     final String response =
-        await rootBundle.loadString('assets/dictionary.json');
+    await rootBundle.loadString('assets/dictionary.json');
     final data = await json.decode(response);
     _dictionary = List<String>.from(data);
     _secret = _dictionary[math.Random().nextInt(_dictionary.length)];
@@ -97,112 +100,57 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   @override
   Widget build(BuildContext context) {
     log("isTv = " + _isTv.toString());
-    if(!_isTv){
+    if (!_isTv) {
       return Scaffold(
-        backgroundColor: Colors.black87,
-        resizeToAvoidBottomInset: false,
-        body: Column(
-        children: [
-          const SizedBox(height: 50),
-          ElevatedButton.icon(
-            icon: const Text('Guide'),
-            label: const Icon(Icons.help),
-            onPressed: () {
-              Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => GuideRoute(isTv: _isTv,)),
-            );
-            },
-          ),
-          GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: wordSize),
-              itemCount: _userInputs.length,
-              itemBuilder: (BuildContext ctx, index) {
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 500),
-                  margin: const EdgeInsets.all(2),
-                  alignment: Alignment.center,
-                  transform: Matrix4.skewY(_inputsState[index] == SelectedColor.initial ? 0 : math.pi),
-                  child: Text(_userInputs[index].toUpperCase()),
-                  decoration: BoxDecoration(
-                      color: getColor(_inputsState[index], false),
-                      borderRadius: BorderRadius.circular(15)),
-                );
-              }),
-          const Spacer(),
-          ElevatedButton.icon(
-            icon: const Text('Try another word'),
-            label: const Icon(Icons.restart_alt),
-            onPressed: _restartGame,
-          ),
-          const Spacer(),
-          CustomKeyboard(
-            buttonColors: _keyboardKeysState,
-            onTextInput: (myText) {
-              _insertLetter(myText);
-            },
-            onEnter: _enter,
-            onBackspace: _backspace,
-          ),
-        ],
-      ));
-    }
-    else {
-      return Scaffold(
-      backgroundColor: Colors.black87,
-      resizeToAvoidBottomInset: false,
-      body: Row(
-        children: [
-          const Spacer(flex: 1),
-          Expanded(
-              flex: 5,
-              child: Column(
-                children: [
-                  const SizedBox(height: 50),
-                  ElevatedButton.icon(
-                    icon: const Text('How to play'),
-                    label: const Icon(Icons.help),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GuideRoute(isTv: _isTv,)),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 25),
-              IgnorePointer(
-                      ignoring: true,
-                      child: GridView.builder(
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: wordSize),
-                          itemCount: _userInputs.length,
-                          itemBuilder: (BuildContext ctx, index) {
-                            return Container(
-                              margin: const EdgeInsets.all(2),
-                              alignment: Alignment.center,
-                              child: Text(_userInputs[index].toUpperCase()),
-                              decoration: BoxDecoration(
-                                  color: getColor(_inputsState[index], false),
-                                  borderRadius: BorderRadius.circular(15)),
-                            );
-                          })),
-                  const Spacer(flex: 1),
-                  ElevatedButton.icon(
-                    icon: const Text('Try another word'),
-                    label: const Icon(Icons.restart_alt),
-                    onPressed: _restartGame,
-                  ),
-                  const Spacer(flex: 1),
-                ],
-              )),
-          const Spacer(flex: 1),
-          Expanded(
-              flex: 10,
+          backgroundColor: Colors.black87,
+          resizeToAvoidBottomInset: false,
+          body: Column(
+            children: [
+              const SizedBox(height: 25),
+              ElevatedButton.icon(
+                icon: const Text('Guide'),
+                label: const Icon(Icons.help),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => GuideRoute(isTv: _isTv,)),
+                  );
+                },
+              ),
+              const Spacer(),
+              Flexible(
+            flex:60,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 300),
+              child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: wordSize),
+                  itemCount: _userInputs.length,
+                  itemBuilder: (BuildContext ctx, index) {
+                    return AnimatedContainer(
+                      duration: const Duration(milliseconds: 500),
+                      margin: const EdgeInsets.all(2),
+                      alignment: Alignment.center,
+                      transform: Matrix4.skewY(
+                          _inputsState[index] == SelectedColor.initial
+                              ? 0
+                              : math.pi),
+                      child: Text(_userInputs[index].toUpperCase()),
+                      decoration: BoxDecoration(
+                          color: getColor(_inputsState[index], false),
+                          borderRadius: BorderRadius.circular(15)),
+                    );
+                  }),
+            )),
+              const Spacer(),
+              ElevatedButton.icon(
+                icon: const Text('Try another word'),
+                label: const Icon(Icons.restart_alt),
+                onPressed: _restartGame,
+              ),
+              const Spacer(),
+              Flexible(
+              flex: 30,
               child: CustomKeyboard(
                 buttonColors: _keyboardKeysState,
                 onTextInput: (myText) {
@@ -210,11 +158,79 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                 },
                 onEnter: _enter,
                 onBackspace: _backspace,
-              )),
-          const Spacer(flex: 1),
-        ],
-      ),
-    );
+              ),
+            ),
+            ],
+          ));
+    } else {
+      return Scaffold(
+        backgroundColor: Colors.black87,
+        resizeToAvoidBottomInset: false,
+        body: Row(
+          children: [
+            const Spacer(flex: 1),
+            Expanded(
+                flex: 5,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 50),
+                    ElevatedButton.icon(
+                      icon: const Text('How to play'),
+                      label: const Icon(Icons.help),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  GuideRoute(
+                                    isTv: _isTv,
+                                  )),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 25),
+                    IgnorePointer(
+                        ignoring: true,
+                        child: GridView.builder(
+                            shrinkWrap: true,
+                            gridDelegate:
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: wordSize),
+                            itemCount: _userInputs.length,
+                            itemBuilder: (BuildContext ctx, index) {
+                              return Container(
+                                margin: const EdgeInsets.all(2),
+                                alignment: Alignment.center,
+                                child: Text(_userInputs[index].toUpperCase()),
+                                decoration: BoxDecoration(
+                                    color: getColor(_inputsState[index], false),
+                                    borderRadius: BorderRadius.circular(15)),
+                              );
+                            })),
+                    const Spacer(flex: 1),
+                    ElevatedButton.icon(
+                      icon: const Text('Try another word'),
+                      label: const Icon(Icons.restart_alt),
+                      onPressed: _restartGame,
+                    ),
+                    const Spacer(flex: 1),
+                  ],
+                )),
+            const Spacer(flex: 1),
+            Expanded(
+                flex: 10,
+                child: CustomKeyboard(
+                  buttonColors: _keyboardKeysState,
+                  onTextInput: (myText) {
+                    _insertLetter(myText);
+                  },
+                  onEnter: _enter,
+                  onBackspace: _backspace,
+                )),
+            const Spacer(flex: 1),
+          ],
+        ),
+      );
     }
   }
 
@@ -256,9 +272,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
         //didn't get the word
         if (_currentAttempt == maxAttempts) {
           //last attempt failed
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text("Out of attempts. Game over!"),
-          ));
+          showEndGameDialog(context, _secret);
         } else {
           //game goes on, provide visual clues
           setState(() {
@@ -295,7 +309,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
     setState(() {
       _userInputs.forEachIndexed((index, item) => _userInputs[index] = "");
       _inputsState.forEachIndexed(
-          (index, item) => _inputsState[index] = SelectedColor.initial);
+              (index, item) => _inputsState[index] = SelectedColor.initial);
       _keyboardKeysState.clear();
       _currentAttempt = 1;
       _readJson();

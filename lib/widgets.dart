@@ -1,6 +1,7 @@
 // ignore_for_file: curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 enum SelectedColor {
   initial,
@@ -13,8 +14,10 @@ enum SelectedColor {
 Color getColor(SelectedColor? state, bool isInKeyboard) {
   switch (state) {
     case SelectedColor.initial:
-      if(!isInKeyboard) return Colors.white;
-      else return Colors.grey.shade400;
+      if (!isInKeyboard)
+        return Colors.white;
+      else
+        return Colors.grey.shade400;
     case SelectedColor.absent:
       return Colors.white54;
     case SelectedColor.present:
@@ -22,8 +25,10 @@ Color getColor(SelectedColor? state, bool isInKeyboard) {
     case SelectedColor.presentWrongPlace:
       return Colors.amber;
     default:
-      if(!isInKeyboard) return Colors.grey.shade600;
-      else return Colors.white;
+      if (!isInKeyboard)
+        return Colors.grey.shade600;
+      else
+        return Colors.white;
   }
 }
 
@@ -191,9 +196,45 @@ class BackspaceKey extends StatelessWidget {
             ),
           ),
           decoration: BoxDecoration(
-              color: Colors.grey.shade400, borderRadius: BorderRadius.circular(8)),
+              color: Colors.grey.shade400,
+              borderRadius: BorderRadius.circular(8)),
         ),
       ),
     );
   }
+}
+
+Future<void> showEndGameDialog(BuildContext context, String properWord) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false, // user must tap button!
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Out of attempts'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              const Text('Good try! But we expected the word'),
+              Text(properWord, style: const TextStyle(fontWeight: FontWeight.bold)),
+              const Text('Try again?'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('YES'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            ),
+            TextButton(
+            child: const Text('That\'s enough'),
+            onPressed: () {
+              SystemNavigator.pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }
