@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'guide.dart';
 import 'widgets.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:in_app_review/in_app_review.dart';
 
 void main() {
   runApp(const WordleApp());
@@ -31,8 +32,8 @@ class WordleApp extends StatelessWidget {
   }
 }
 
-SelectedColor getSelectedState(
-    List<String> secret, String input, int position) {
+SelectedColor getSelectedState(List<String> secret, String input,
+    int position) {
   //not enough to compare only current one, if there is several same letters
   // hints are not obvious
   if (secret[position] == input) {
@@ -54,6 +55,8 @@ class KeyboardDemo extends StatefulWidget {
 class _KeyboardDemoState extends State<KeyboardDemo> {
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
   bool _isTv = false;
+
+  final InAppReview inAppReview = InAppReview.instance;
 
   Future<void> initPlatformState() async {
     var isTv = (await deviceInfoPlugin.androidInfo)
@@ -78,7 +81,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   int _currentAttempt = 1;
 
   final List<String> _userInputs =
-      List.filled(wordSize * maxAttempts, "", growable: false);
+  List.filled(wordSize * maxAttempts, "", growable: false);
   final List<SelectedColor> _inputsState = List.filled(
       wordSize * maxAttempts, SelectedColor.initial,
       growable: false);
@@ -91,7 +94,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
   Future<void> _readJson() async {
     final String response =
-        await rootBundle.loadString('assets/dictionary.json');
+    await rootBundle.loadString('assets/dictionary.json');
     final data = await json.decode(response);
     _dictionary = List<String>.from(data);
     _secret = _dictionary[math.Random().nextInt(_dictionary.length)];
@@ -114,7 +117,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => GuideRoute(
+                        builder: (context) =>
+                            GuideRoute(
                               isTv: _isTv,
                             )),
                   );
@@ -186,7 +190,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => GuideRoute(
+                              builder: (context) =>
+                                  GuideRoute(
                                     isTv: _isTv,
                                   )),
                         );
@@ -199,8 +204,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                         child: GridView.builder(
                             shrinkWrap: true,
                             gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: wordSize),
+                            SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: wordSize),
                             itemCount: _userInputs.length,
                             itemBuilder: (BuildContext ctx, index) {
                               return Container(
@@ -212,15 +217,13 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                                     borderRadius: BorderRadius.circular(15)),
                               );
                             })),
-                    const IgnorePointer(
-                        ignoring: true, child: Spacer(flex: 1)),
+                    const IgnorePointer(ignoring: true, child: Spacer(flex: 1)),
                     ElevatedButton.icon(
                       icon: const Text('Try another word'),
                       label: const Icon(Icons.restart_alt),
                       onPressed: _restartGame,
                     ),
-                    const IgnorePointer(
-                        ignoring: true, child: Spacer(flex: 1)),
+                    const IgnorePointer(ignoring: true, child: Spacer(flex: 1)),
                   ],
                 )),
             const Spacer(flex: 1),
@@ -266,7 +269,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
       //validation failed
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
-            "No such word in dictionary 😔. Each attempt must be a valid 5-letter word 📝."),
+            "No such word in dictionary 😔. Each attempt must be a valid 5-letter word in English📝."),
       ));
     } else {
       setState(() {
@@ -297,6 +300,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
           content: Text("Congrats! You won 🎉"),
         ));
         log('you won');
+        _requestReview();
       }
     }
   }
@@ -312,11 +316,18 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
     }
   }
 
+  Future<void> _requestReview() async {
+    log('trying to request a review');
+    if (await inAppReview.isAvailable()) {
+      inAppReview.requestReview();
+    }
+  }
+
   void _restartGame() {
     setState(() {
       _userInputs.forEachIndexed((index, item) => _userInputs[index] = "");
       _inputsState.forEachIndexed(
-          (index, item) => _inputsState[index] = SelectedColor.initial);
+              (index, item) => _inputsState[index] = SelectedColor.initial);
       _keyboardKeysState.clear();
       _currentAttempt = 1;
       _readJson();
