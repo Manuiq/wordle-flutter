@@ -18,7 +18,7 @@ if (flutterVersionCode == null) {
 
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
-    flutterVersionName = '1.5'
+    flutterVersionName = '1.6'
 }
 
 def keystoreProperties = new Properties()
@@ -51,8 +51,8 @@ android {
         applicationId "ua.polohalo.word_composer"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 5
-        versionName "1.5"
+        versionCode 6
+        versionName "1.6"
     }
 
     signingConfigs {
