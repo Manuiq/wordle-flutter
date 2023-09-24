@@ -32,8 +32,8 @@ class WordleApp extends StatelessWidget {
   }
 }
 
-SelectedColor getSelectedState(List<String> secret, String input,
-    int position) {
+SelectedColor getSelectedState(
+    List<String> secret, String input, int position) {
   //not enough to compare only current one, if there is several same letters
   // hints are not obvious
   if (secret[position] == input) {
@@ -81,7 +81,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
   int _currentAttempt = 1;
 
   final List<String> _userInputs =
-  List.filled(wordSize * maxAttempts, "", growable: false);
+      List.filled(wordSize * maxAttempts, "", growable: false);
   final List<SelectedColor> _inputsState = List.filled(
       wordSize * maxAttempts, SelectedColor.initial,
       growable: false);
@@ -94,7 +94,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
 
   Future<void> _readJson() async {
     final String response =
-    await rootBundle.loadString('assets/dictionary.json');
+        await rootBundle.loadString('assets/dictionary.json');
     final data = await json.decode(response);
     _dictionary = List<String>.from(data);
     _secret = _dictionary[math.Random().nextInt(_dictionary.length)];
@@ -109,21 +109,39 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
           resizeToAvoidBottomInset: false,
           body: Column(
             children: [
-              const SizedBox(height: 25),
-              ElevatedButton.icon(
-                icon: const Text('Guide'),
-                label: const Icon(Icons.help),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            GuideRoute(
-                              isTv: _isTv,
-                            )),
-                  );
-                },
-              ),
+              SizedBox(height: 8 + MediaQuery.of(context).viewPadding.top),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  //Center Row contents horizontally,
+                  children: [
+                    ElevatedButton.icon(
+                      icon: const Text('Guide'),
+                      label: const Icon(Icons.help),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => GuideRoute(
+                                    isTv: _isTv,
+                                  )),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueGrey),
+                      icon: const Text('Get a Hint'),
+                      label: const Icon(Icons.chat_bubble),
+                      onPressed: () {
+                        int hint = (math.Random()).nextInt(5);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              "${hint + 1} letter is \"${_secret.characters.characterAt(hint).toUpperCase()}\". Hope it helps!"),
+                        ));
+                      },
+                    ),
+                  ]),
               const Spacer(),
               Flexible(
                   flex: 60,
@@ -183,20 +201,39 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                 child: Column(
                   children: [
                     const SizedBox(height: 50),
-                    ElevatedButton.icon(
-                      icon: const Text('How to play'),
-                      label: const Icon(Icons.help),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  GuideRoute(
-                                    isTv: _isTv,
-                                  )),
-                        );
-                      },
-                    ),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        //Center Row contents horizontally,
+                        children: [
+                          ElevatedButton.icon(
+                            icon: const Text('How to play'),
+                            label: const Icon(Icons.help),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => GuideRoute(
+                                          isTv: _isTv,
+                                        )),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 16),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blueGrey),
+                            icon: const Text('Hint'),
+                            label: const Icon(Icons.chat_bubble),
+                            onPressed: () {
+                              int hint = (math.Random()).nextInt(5);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text(
+                                    "${hint + 1} letter is \"${_secret.characters.characterAt(hint).toUpperCase()}\". Hope it helps!"),
+                              ));
+                            },
+                          ),
+                        ]),
                     const IgnorePointer(
                         ignoring: true, child: SizedBox(height: 25)),
                     IgnorePointer(
@@ -204,8 +241,8 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
                         child: GridView.builder(
                             shrinkWrap: true,
                             gridDelegate:
-                            SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: wordSize),
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: wordSize),
                             itemCount: _userInputs.length,
                             itemBuilder: (BuildContext ctx, index) {
                               return Container(
@@ -269,7 +306,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
       //validation failed
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
-            "No such word in dictionary 😔. Each attempt must be a valid 5-letter word in English📝."),
+            "No such word in dictionary 😔. Each attempt must be a valid 5-letter English word📝."),
       ));
     } else {
       setState(() {
@@ -282,7 +319,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
         //didn't get the word
         if (_currentAttempt == maxAttempts) {
           //last attempt failed
-          showEndGameDialog(context, _secret);
+          showEndGameDialog(context, _secret, _restartGame);
         } else {
           //game goes on, provide visual clues
           setState(() {
@@ -327,7 +364,7 @@ class _KeyboardDemoState extends State<KeyboardDemo> {
     setState(() {
       _userInputs.forEachIndexed((index, item) => _userInputs[index] = "");
       _inputsState.forEachIndexed(
-              (index, item) => _inputsState[index] = SelectedColor.initial);
+          (index, item) => _inputsState[index] = SelectedColor.initial);
       _keyboardKeysState.clear();
       _currentAttempt = 1;
       _readJson();

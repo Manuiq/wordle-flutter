@@ -209,7 +209,7 @@ class BackspaceKey extends StatelessWidget {
   }
 }
 
-Future<void> showEndGameDialog(BuildContext context, String properWord) async {
+Future<void> showEndGameDialog(BuildContext context, String properWord, void Function() restartGame) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap button!
@@ -229,7 +229,7 @@ Future<void> showEndGameDialog(BuildContext context, String properWord) async {
           TextButton(
             child: const Text('YES'),
             onPressed: () {
-              Navigator.of(context).pop();
+              restartGame();
             },
             ),
             TextButton(
